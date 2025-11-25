@@ -22,7 +22,7 @@
     border-radius: 6px;
     overflow-x: auto;
   }
-  code { color: #f1e3e3; }
+  code { color: #938ac9; }
   .comment { color: #00cc44; font-style: italic; } /* vert pour les commentaires */
   .section {
     background: white;
@@ -284,6 +284,88 @@ function App() {
 </code></pre>
 
 </div>
+<!-- ====================================================== -->
+<!-- 5 : THEORIE SUR REACT -->
+<!-- ====================================================== -->
+<div class="section">
+<h2>5. Théorie React et explications détaillées</h2>
+
+<article>
+<h3>5.1. Qu’est-ce que React ?</h3>
+<p>
+React est une bibliothèque JavaScript pour créer des interfaces utilisateurs.  
+Elle permet de gérer la vue d’une application de façon **déclarative**, c’est-à-dire que vous décrivez <strong>ce que vous voulez voir</strong> plutôt que de manipuler le DOM directement.
+</p>
+
+<h3>5.2. Composants</h3>
+<p>
+Un <strong>composant</strong> est une fonction ou une classe qui retourne du HTML (en JSX).  
+Exemple : <code>function App() { return &lt;div&gt;Hello&lt;/div&gt;; }</code>  
+Chaque composant peut contenir son propre état et sa logique.
+</p>
+
+<h3>5.3. JSX</h3>
+<p>
+JSX est un langage qui ressemble à du HTML mais permet d’écrire du JavaScript à l’intérieur.  
+Exemple : <code>&lt;h3&gt;{a.nom}&lt;/h3&gt;</code> affiche le nom de l’animal.  
+Les accolades <code>{}</code> indiquent que l’on insère une expression JavaScript.
+</p>
+
+<h3>5.4. useState</h3>
+<p>
+<code>useState</code> crée un état local dans un composant.  
+- `const [animaux, setAnimaux] = React.useState([]);`  
+  - `animaux` = valeur actuelle  
+  - `setAnimaux` = fonction pour mettre à jour cette valeur  
+Quand on appelle `setAnimaux(nouvelleValeur)`, React **redessine automatiquement le composant**.
+</p>
+
+<h3>5.5. useEffect</h3>
+<p>
+<code>useEffect</code> sert à gérer des effets secondaires, comme :  
+- charger des données depuis un fichier ou une API  
+- écouter des événements  
+- mettre à jour le DOM  
+Exemple :  
+<code>
+React.useEffect(() =&gt; { fetch(...).then(...) }, []);
+</code>  
+Le tableau vide `[]` indique que l’effet se déclenche **une seule fois au montage du composant**.
+</p>
+
+<h3>5.6. map() dans React</h3>
+<p>
+map() est utilisé pour créer plusieurs éléments à partir d’un tableau.  
+Exemple :  
+<code>{filtres.map(a =&gt; &lt;article key={a.id}&gt;&lt;h3&gt;{a.nom}&lt;/h3&gt;&lt;/article&gt;)}</code>  
+- Chaque élément doit avoir un `key` unique pour que React sache **quoi mettre à jour** lors d’un re-render.
+</p>
+
+<h3>5.7. Événements dans React</h3>
+<p>
+Les événements sont déclarés directement dans le JSX :  
+- <code>onChange</code> pour détecter la saisie d’un input  
+- <code>onClick</code> pour un bouton  
+Exemple :  
+<code>&lt;button onClick={() =&gt; setAsc(!asc)}&gt;Trier&lt;/button&gt;</code>  
+Ici, cliquer sur le bouton **inverse l’état `asc`** et déclenche un re-render.
+</p>
+
+<h3>5.8. Flux de données</h3>
+<p>
+- Les données viennent du <strong>state</strong> (`animaux`, `q`, `asc`)  
+- On applique **filtrage et tri** sur ces données  
+- Le JSX est **re-rendu automatiquement** à chaque changement de state
+</p>
+
+<h3>5.9. Avantages par rapport au DOM classique</h3>
+<ul>
+<li>Réactivité : le composant se met à jour automatiquement quand les données changent.</li>
+<li>Code plus lisible et modulable grâce aux composants.</li>
+<li>Gestion facile des listes avec map() et des événements directement dans le JSX.</li>
+</ul>
+</article>
+</div>
 
 <!-- ====================================================== -->
 <!-- 4 : EXERCICES -->
@@ -315,28 +397,7 @@ function App() {
     (Appuie sur Échap pour continuer)
   </div>
 </div>
-
-<h1>Guide complet : Animaux, DOM, Modules, Fetch, Map — avec logique</h1>
-<p style="color:red; font-weight:bold;">
-Attention : Ne copiez pas le code tel quel ! Recodez-le vous-même pour mieux le mémoriser et comprendre son fonctionnement.
-</p>
-
-<!-- Tout ton contenu existant ici (les sections, le code, etc.) -->
-<!-- Tu colles ici exactement tout le contenu que tu avais entre <body> et </body> -->
-
-<!-- ================================== TON CONTENU ICI ================================== -->
-<!-- (je remets juste un exemple pour que ça fonctionne, remplace par ton vrai contenu) -->
-
-<div class="section">
-  <h2>1. Bases expliquées avec logique</h2>
-  <h3>1.1. JSON</h3>
-  <pre><code>[ { "nom": "Chat", "age": 3 } ]</code></pre>
-  <!-- etc. tout ton contenu -->
-</div>
-
-<!-- ... le reste de ton HTML ... -->
-
-<!-- =================================================================================== -->
+ 
 
 <script>
 // =============== PROTECTION MAXIMALE CONTRE LE COPIER-COLLER ===============
@@ -391,7 +452,7 @@ document.addEventListener("keydown", e => {
 });
 
 // Message amusant au développeur qui ouvre la console
-console.log("%c🛑 Arrête de chercher à copier ! Recode à la main, c’est le seul vrai moyen d’apprendre ! 😜", 
+console.log("%c🛑 Arrête de chercher à copier ! Recode à la main, c’est le seul vrai moyen d’apprendre ! ", 
 "color: #ff5555; font-size: 2rem; font-weight: bold;");
 
 </script>
