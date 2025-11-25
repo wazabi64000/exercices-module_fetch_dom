@@ -37,6 +37,26 @@
     border-left: 4px solid #0077cc;
     border-radius: 6px;
   }
+
+  /* Message anti-copie qui couvre tout l'écran */
+#antiCopy {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.95);
+  color: #ff5555;
+  font-size: 3rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 999999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s;
+}
+#antiCopy.active { opacity: 1; pointer-events: all; }
 </style>
 </head>
 
@@ -287,6 +307,93 @@ function App() {
 </div>
 
 </div>
+<!-- Message anti-copie -->
+<div id="antiCopy">
+  <div>
+    🔒 TU CODE, TU COPIE PAS !<br><br>
+    <span style="font-size:2rem;">Recode à la main, c’est comme ça qu’on apprend vraiment 😉</span><br><br>
+    (Appuie sur Échap pour continuer)
+  </div>
+</div>
 
+<h1>Guide complet : Animaux, DOM, Modules, Fetch, Map — avec logique</h1>
+<p style="color:red; font-weight:bold;">
+Attention : Ne copiez pas le code tel quel ! Recodez-le vous-même pour mieux le mémoriser et comprendre son fonctionnement.
+</p>
+
+<!-- Tout ton contenu existant ici (les sections, le code, etc.) -->
+<!-- Tu colles ici exactement tout le contenu que tu avais entre <body> et </body> -->
+
+<!-- ================================== TON CONTENU ICI ================================== -->
+<!-- (je remets juste un exemple pour que ça fonctionne, remplace par ton vrai contenu) -->
+
+<div class="section">
+  <h2>1. Bases expliquées avec logique</h2>
+  <h3>1.1. JSON</h3>
+  <pre><code>[ { "nom": "Chat", "age": 3 } ]</code></pre>
+  <!-- etc. tout ton contenu -->
+</div>
+
+<!-- ... le reste de ton HTML ... -->
+
+<!-- =================================================================================== -->
+
+<script>
+// =============== PROTECTION MAXIMALE CONTRE LE COPIER-COLLER ===============
+
+const anti = document.getElementById("antiCopy");
+
+// Bloque le clic droit partout
+document.addEventListener("contextmenu", e => {
+  e.preventDefault();
+  showWarning();
+  return false;
+});
+
+// Bloque les raccourcis classiques de copie
+document.addEventListener("keydown", e => {
+  if (e.ctrlKey || e.metaKey) {
+    if ([65,67,85,88,83,65].includes(e.keyCode) || // A (sélectionner tout), C, U (source), X, S
+        e.key === "a" || e.key === "c" || e.key === "x") {
+      e.preventDefault();
+      showWarning();
+    }
+  }
+  // F12, Ctrl+Shift+I, Ctrl+Shift+J, etc.
+  if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && [73,74,67].includes(e.keyCode))) {
+    e.preventDefault();
+    showWarning();
+  }
+});
+
+// Bloque la sélection de texte (même si on force)
+document.addEventListener("selectstart", e => e.preventDefault());
+document.addEventListener("dragstart", e => e.preventDefault());
+
+// Si quelqu’un essaie de tricher avec la console
+setInterval(() => {
+  if (window.console && (console.log !== console.log)) {
+    showWarning();
+  }
+}, 1000);
+
+function showWarning() {
+  anti.classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+// Permet de fermer avec Échap
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") {
+    anti.classList.remove("active");
+    document.body.style.overflow = "";
+  }
+});
+
+// Message amusant au développeur qui ouvre la console
+console.log("%c🛑 Arrête de chercher à copier ! Recode à la main, c’est le seul vrai moyen d’apprendre ! 😜", 
+"color: #ff5555; font-size: 2rem; font-weight: bold;");
+
+</script>
 </body>
 </html>
