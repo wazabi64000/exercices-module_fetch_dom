@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Guide complet expliqué — Animaux, DOM, Modules, Fetch, Map</title>
+
+<style>
+  body {
+    font-family: system-ui, sans-serif;
+    background: #f5f5f5;
+    padding: 2rem;
+    line-height: 1.6;
+  }
+  h1, h2, h3 {
+    margin-top: 2rem;
+  }
+  pre {
+    background: #2b2b2b;
+    color: #f8f8f2;
+    padding: 1rem;
+    border-radius: 6px;
+    overflow-x: auto;
+  }
+  code { color: #f1e3e3; }
+  .comment { color: #00cc44; font-style: italic; } /* vert pour les commentaires */
+  .section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    border: 1px solid #ddd;
+  }
+  .exo {
+    background: #ecf7ff;
+    padding: 1rem;
+    border-left: 4px solid #0077cc;
+    border-radius: 6px;
+  }
+</style>
+</head>
+
+<body>
+
+<h1>Guide complet : Animaux, DOM, Modules, Fetch, Map — avec logique</h1>
+
+<p style="color:red; font-weight:bold;">
+⚠️ Attention : Ne copiez pas le code tel quel ! Recodez-le vous-même pour mieux le mémoriser et comprendre son fonctionnement.
+</p>
+
+<div class="section">
+  <h2>1. Bases expliquées avec logique</h2>
+
+  <h3>1.1. JSON</h3>
+  <p>
+    JSON est un format texte pour ranger des infos que l’ordinateur comprend.  
+    Ici, on crée une liste d’animaux. Les commentaires expliquent ce que chaque ligne représente.
+  </p>
+
+<pre>
+<code>[
+<span class="comment">// Chaque objet représente un animal, avec son nom et son âge</span>
+  { "nom": "Chat", "age": 3 }, <span class="comment">// clé 'nom' = nom de l'animal, clé 'age' = âge de l'animal</span>
+  { "nom": "Chien", "age": 5 }
+]</code>
+</pre>
+
+  <h3>1.2. DOM</h3>
+  <p>
+    Le DOM représente la page HTML. On peut créer, modifier ou supprimer des éléments.  
+    Les commentaires expliquent ce que chaque méthode fait et pourquoi on l'utilise.
+  </p>
+
+<pre><code><span class="comment">// Crée un bloc &lt;div&gt; pour le placer dans la page</span>
+document.createElement("div");</code></pre>
+
+  <h3>1.3. Modules</h3>
+  <p>
+    Les modules permettent de séparer le code en fichiers réutilisables.  
+    Les commentaires expliquent ce que chaque export ou import fait.
+  </p>
+
+<pre><code><span class="comment">// fichier animaux.js : contient des fonctions pour créer des cartes d'animaux</span>
+export function createAnimalCard(){...}
+
+<span class="comment">// fichier script.js : importe les fonctions depuis le module pour pouvoir les utiliser</span>
+import { createAnimalCard } from "./animaux.js";</code></pre>
+
+  <h3>1.4. Fetch</h3>
+  <p>
+    Fetch sert à aller chercher des données depuis un fichier ou une API.  
+    Les commentaires expliquent le flux : envoyer la requête → recevoir la réponse → transformer en objet JS.
+  </p>
+
+<pre><code><span class="comment">// récupère le fichier JSON des animaux</span>
+const res = await fetch("./animaux.json"); <span class="comment">// Fetch envoie une requête HTTP pour récupérer le fichier</span>
+const data = await res.json(); <span class="comment">// transforme la réponse en objet JavaScript utilisable</span></code></pre>
+
+  <h3>1.5. map()</h3>
+  <p>
+    map() permet de transformer chaque élément d’une liste en un nouveau format.  
+    Les commentaires expliquent le rôle de chaque transformation.
+  </p>
+
+<pre><code><span class="comment">// extrait les noms de tous les animaux pour créer une nouvelle liste</span>
+const noms = animaux.map(a =&gt; a.nom); <span class="comment">// a = chaque élément du tableau animaux</span></code></pre>
+</div>
+
+<!-- ====================================================== -->
+<!-- 2 : PROJET COMPLET -->
+<!-- ====================================================== -->
+
+<div class="section">
+<h2>2. Projet complet étape par étape avec logique</h2>
+
+<h3>2.1. animaux.json</h3>
+
+<pre><code>[
+  { "id": 1, "nom": "Chat", "age": 3 },
+  { "id": 2, "nom": "Chien", "age": 5 },
+  { "id": 3, "nom": "Lapin", "age": 2 }
+]</code></pre>
+
+<h3>2.2. domUtils.js</h3>
+
+<pre><code><span class="comment">// Crée une carte pour un animal</span>
+export function createAnimalCard(animal) {
+
+  <span class="comment">// Crée un bloc &lt;article&gt; pour contenir l'animal</span>
+  const article = document.createElement("article");
+  article.className = "card"; <span class="comment">// ajoute la classe CSS 'card' pour le style</span>
+  article.dataset.id = animal.id; <span class="comment">// stocke l'identifiant pour pouvoir le retrouver plus tard</span>
+
+  <span class="comment">// Crée un titre pour afficher le nom</span>
+  const h3 = document.createElement("h3");
+  h3.textContent = animal.nom; <span class="comment">// met le nom de l'animal dans le titre</span>
+  article.appendChild(h3); <span class="comment">// ajoute le titre dans le bloc article</span>
+
+  <span class="comment">// Crée un paragraphe pour afficher l'âge</span>
+  const p = document.createElement("p");
+  p.textContent = "Âge : " + animal.age + " ans"; <span class="comment">// affiche l'âge</span>
+  article.appendChild(p); <span class="comment">// ajoute le paragraphe dans le bloc article</span>
+
+  <span class="comment">// Retourne la carte complète pour pouvoir l’ajouter à la page</span>
+  return article;
+}
+
+<span class="comment">// Fonction pour afficher tous les animaux dans un conteneur</span>
+export function renderList(container, animaux) {
+
+  <span class="comment">// Vide le conteneur pour ne pas ajouter les animaux plusieurs fois</span>
+  container.innerHTML = "";
+
+  <span class="comment">// Crée un DocumentFragment pour améliorer les performances</span>
+  const fragment = document.createDocumentFragment();
+
+  <span class="comment">// Transforme chaque animal en carte et l'ajoute au fragment</span>
+  animaux.map(createAnimalCard).forEach(card =&gt; fragment.appendChild(card));
+
+  <span class="comment">// Ajoute toutes les cartes dans le conteneur en une seule opération</span>
+  container.appendChild(fragment);
+}
+</code></pre>
+
+<h3>2.3. script.js</h3>
+
+<pre><code><span class="comment">// importe les fonctions depuis le module pour créer et afficher les cartes</span>
+import { createAnimalCard, renderList } from "./domUtils.js";
+
+<span class="comment">// Récupère les éléments HTML pour afficher la liste et gérer la recherche et le tri</span>
+const listEl = document.getElementById("list");
+const search = document.getElementById("search");
+const sortBtn = document.getElementById("sortBtn");
+
+<span class="comment">// Initialise les variables</span>
+let animaux = []; <span class="comment">// liste complète d'animaux</span>
+let filtres = []; <span class="comment">// liste filtrée en fonction de la recherche</span>
+let asc = true; <span class="comment">// ordre de tri : true = ascendant, false = descendant</span>
+
+<span class="comment">// Charger les animaux depuis le fichier JSON</span>
+async function loadData() {
+  const res = await fetch("./animaux.json"); <span class="comment">// envoie une requête HTTP pour récupérer le JSON</span>
+  animaux = await res.json(); <span class="comment">// convertit le JSON en tableau JS</span>
+  filtres = [...animaux]; <span class="comment">// copie de la liste pour le filtrage</span>
+  update(); <span class="comment">// met à jour l'affichage après chargement</span>
+}
+
+<span class="comment">// Mettre à jour l’affichage selon la recherche et le tri</span>
+function update() {
+  const q = search.value.toLowerCase(); <span class="comment">// récupère le texte de recherche en minuscules</span>
+
+  <span class="comment">// Filtre les animaux selon la recherche</span>
+  filtres = animaux.filter(a =&gt; a.nom.toLowerCase().includes(q));
+
+  <span class="comment">// Trie les animaux selon l'ordre ascendant ou descendant</span>
+  filtres.sort((a, b) =&gt;
+    asc ? a.nom.localeCompare(b.nom)
+        : b.nom.localeCompare(a.nom)
+  );
+
+  <span class="comment">// Affiche les animaux filtrés et triés</span>
+  renderList(listEl, filtres);
+}
+
+<span class="comment">// Événement de recherche : met à jour la liste à chaque frappe</span>
+search.addEventListener("input", update);
+
+<span class="comment">// Événement de tri : inverse l'ordre et met à jour le bouton</span>
+sortBtn.addEventListener("click", () =&gt; {
+  asc = !asc; <span class="comment">// inverse l'ordre</span>
+  sortBtn.textContent = asc ? "Trier A→Z" : "Trier Z→A"; <span class="comment">// change le texte du bouton</span>
+  update(); <span class="comment">// met à jour l'affichage</span>
+});
+
+<span class="comment">// Lancer l'application au démarrage</span>
+loadData();
+</code></pre>
+
+</div>
+
+<!-- ====================================================== -->
+<!-- 3 : VERSION REACT -->
+<!-- ====================================================== -->
+<div class="section">
+<h2>3. Version React simplifiée</h2>
+
+<pre><code><span class="comment">// Composant principal React</span>
+function App() {
+  <span class="comment">// Définition des états : animaux, recherche et tri</span>
+  const [animaux, setAnimaux] = React.useState([]);
+  const [q, setQ] = React.useState("");
+  const [asc, setAsc] = React.useState(true);
+
+  <span class="comment">// Chargement des animaux depuis JSON au démarrage du composant</span>
+  React.useEffect(() =&gt; {
+    fetch("./animaux.json")
+      .then(res =&gt; res.json())
+      .then(setAnimaux);
+  }, []);
+
+  <span class="comment">// Filtrage et tri des animaux selon la recherche et l'ordre</span>
+  const filtres = animaux
+    .filter(a =&gt; a.nom.toLowerCase().includes(q.toLowerCase()))
+    .sort((a, b) =&gt;
+      asc ? a.nom.localeCompare(b.nom)
+          : b.nom.localeCompare(a.nom)
+    );
+
+  <span class="comment">// Rendu JSX : input de recherche, bouton de tri, et affichage des cartes</span>
+  return (
+    &lt;div&gt;
+      &lt;input value={q} onChange={e =&gt; setQ(e.target.value)} /&gt; <span class="comment">// input recherche</span>
+      &lt;button onClick={() =&gt; setAsc(!asc)}&gt;Trier&lt;/button&gt; <span class="comment">// bouton tri</span>
+
+      {filtres.map(a =&gt; (
+        &lt;article key={a.id}&gt;
+          &lt;h3&gt;{a.nom}&lt;/h3&gt; <span class="comment">// nom de l'animal</span>
+          &lt;p&gt;Âge : {a.age} ans&lt;/p&gt; <span class="comment">// âge de l'animal</span>
+        &lt;/article&gt;
+      ))}
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+
+</div>
+
+<!-- ====================================================== -->
+<!-- 4 : EXERCICES -->
+<!-- ====================================================== -->
+<div class="section">
+<h2>4. Exercices</h2>
+
+<div class="exo">
+  <h3>Exercice 1 — Refaire l’exemple</h3>
+  <p>Recoder tout le projet pour comprendre chaque étape : HTML + JSON + Modules + Fetch + DOM + map().</p>
+</div>
+
+<div class="exo">
+  <h3>Exercice 2 — Ajouter un bouton “Age”</h3>
+  <p>Ajouter un bouton sur chaque carte pour afficher l'âge avec alert().</p>
+</div>
+
+<div class="exo">
+  <h3>Exercice 3 — Version React simplifiée</h3>
+  <p>Refaire l'exercice 1 mais en React avec useState, useEffect et map().</p>
+</div>
+
+</div>
+
+</body>
+</html>
