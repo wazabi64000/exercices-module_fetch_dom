@@ -399,62 +399,6 @@ Ici, cliquer sur le bouton **inverse l’état `asc`** et déclenche un re-rende
 </div>
  
 
-<script>
-// =============== PROTECTION MAXIMALE CONTRE LE COPIER-COLLER ===============
-
-const anti = document.getElementById("antiCopy");
-
-// Bloque le clic droit partout
-document.addEventListener("contextmenu", e => {
-  e.preventDefault();
-  showWarning();
-  return false;
-});
-
-// Bloque les raccourcis classiques de copie
-document.addEventListener("keydown", e => {
-  if (e.ctrlKey || e.metaKey) {
-    if ([65,67,85,88,83,65].includes(e.keyCode) || // A (sélectionner tout), C, U (source), X, S
-        e.key === "a" || e.key === "c" || e.key === "x") {
-      e.preventDefault();
-      showWarning();
-    }
-  }
-  // F12, Ctrl+Shift+I, Ctrl+Shift+J, etc.
-  if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && [73,74,67].includes(e.keyCode))) {
-    e.preventDefault();
-    showWarning();
-  }
-});
-
-// Bloque la sélection de texte (même si on force)
-document.addEventListener("selectstart", e => e.preventDefault());
-document.addEventListener("dragstart", e => e.preventDefault());
-
-// Si quelqu’un essaie de tricher avec la console
-setInterval(() => {
-  if (window.console && (console.log !== console.log)) {
-    showWarning();
-  }
-}, 1000);
-
-function showWarning() {
-  anti.classList.add("active");
-  document.body.style.overflow = "hidden";
-}
-
-// Permet de fermer avec Échap
-document.addEventListener("keydown", e => {
-  if (e.key === "Escape") {
-    anti.classList.remove("active");
-    document.body.style.overflow = "";
-  }
-});
-
-// Message amusant au développeur qui ouvre la console
-console.log("%c🛑 Arrête de chercher à copier ! Recode à la main, c’est le seul vrai moyen d’apprendre ! ", 
-"color: #ff5555; font-size: 2rem; font-weight: bold;");
-
 </script>
 </body>
 </html>
